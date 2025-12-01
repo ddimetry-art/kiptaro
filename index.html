@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Нагадай-ка!</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background: #f9f9f9;
+      padding: 20px;
+    }
+    #startScreen, #cardBackScreen, #resultScreen {
+      display: none;
+    }
+    .screen {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    button {
+      margin: 20px 0;
+      padding: 12px 24px;
+      font-size: 18px;
+      background: #8e44ad;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #732d91;
+    }
+    h2 {
+      margin-top: 30px;
+      color: #333;
+    }
+    p {
+      line-height: 1.6;
+      font-size: 18px;
+      color: #555;
+      max-width: 600px;
+      margin: 15px auto;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Экран приветствия -->
+<div id="startScreen" class="screen" style="display: block;">
+  <h1>✨ Нагадай-ка! ✨</h1>
+  <img id="start1" src="start1.png" alt="Иллюстрация начала">
+  <br />
+  <button onclick="showCardBack()">Нагадай-ка!</button>
+</div>
+
+<!-- Экран с перевёрнутой картой -->
+<div id="cardBackScreen" class="screen">
+  <h2>Сосредоточьтесь…</h2>
+  <img id="cardBack" src="cartback.png" alt="Рубашка карты" onclick="showResult()">
+</div>
+
+<!-- Экран результата -->
+<div id="resultScreen" class="screen">
+  <h2 id="cardName">Рыба</h2>
+  <img id="cardImg" src="" alt="Карта Таро">
+  <p id="prediction">Рыба</p>
+  <br />
+  <button onclick="restart()">Еще раз!</button>
+</div>
+
+<script>
+  // Предсказания и названия карт (можно заменить на настоящие)
+  const cards = [
+    { name: "Шут", img: "cartimg1.png", text: "Тебя ждёт неожиданное приключение! Или просто забыл выключить утюг. Лучше проверь." },
+    { name: "Маг", img: "cartimg2.png", text: "Ты — творец своей реальности. Главное — не перепутай её с чужой." },
+    { name: "Жрица", img: "cartimg3.png", text: "Тайны окружают тебя. Но, возможно, ты просто не читал инструкцию." },
+    { name: "Императрица", img: "cartimg4.png", text: "Пора устроить себе праздник! Или хотя бы съесть пирожное." },
+    { name: "Император", img: "cartimg5.png", text: "Ты управляешь своей жизнью. Особенно когда выбираешь сериал на вечер." },
+    { name: "Иерофант", img: "cartimg6.png", text: "Совет от мудреца: не верь всему, что гадают в интернете." },
+    { name: "Влюбленные", img: "cartimg7.png", text: "Выбор предстоит важный… Пицца или суши? Сердце знает." },
+    { name: "Колесница", img: "cartimg8.png", text: "Ты движешься к цели! А если нет — просто иди туда, где Wi-Fi лучше." },
+    { name: "Сила", img: "cartimg9.png", text: "Твоя сила — в терпении. И в том, чтобы не перезапускать роутер 100 раз." }
+  ];
+
+  function showCardBack() {
+    document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('cardBackScreen').style.display = 'block';
+  }
+
+  function showResult() {
+    const randomCard = cards[Math.floor(Math.random() * cards.length)];
+    document.getElementById('cardName').textContent = randomCard.name;
+    document.getElementById('cardImg').src = randomCard.img;
+    document.getElementById('prediction').textContent = randomCard.text;
+
+    document.getElementById('cardBackScreen').style.display = 'none';
+    document.getElementById('resultScreen').style.display = 'block';
+  }
+
+  function restart() {
+    document.getElementById('resultScreen').style.display = 'none';
+    document.getElementById('startScreen').style.display = 'block';
+  }
+</script>
+
+</body>
+</html>
