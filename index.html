@@ -86,10 +86,22 @@
     #artifactLink:hover {
       text-decoration: underline;
     }
+    #character {
+  position: fixed;        /* фиксированное позиционирование — не скроллится, всегда на месте */
+  right: 20px;            /* отступ от правого края */
+  bottom: 20px;           /* или top: 50%; transform: translateY(-50%); — если хотите по центру по вертикали */
+  max-width: 180px;       /* ограничение размера */
+  height: auto;
+  z-index: 100;           /* поверх всех остальных элементов */
+  pointer-events: none;   /* чтобы не мешал кликам по кнопкам и фону */
+}
   </style>
 </head>
 <body>
 
+  <!-- Персонаж — поверх всего -->
+  <img id="character" src="character.png" alt="Персонаж">
+  
 <!-- Экран приветствия -->
 <div id="startScreen" class="screen" style="display: block;">
   <h1>КИП-нутое гадание</h1>
