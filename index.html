@@ -11,7 +11,7 @@
       background-image: url('backimg.png');
       background-size: cover;
       background-position: center;
-      background-attachment: fixed;
+      background-attachment: scroll; /* fixed может глючить на iOS */
       background-repeat: no-repeat;
       padding: 20px;
       margin: 0;
@@ -19,37 +19,40 @@
       box-sizing: border-box;
       color: #333;
     }
+
     #startScreen, #cardBackScreen, #resultScreen {
       display: none;
     }
-.screen {
-  min-height: 350px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin: 0 auto;
-  background-color: rgba(255, 255, 255, 0.80);
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 0px 0px rgba(0, 0, 0, 0.1);
-  box-sizing: border-box;
-}
-.screen img {
-  max-width: 100%;
-  max-height: 65%;
-  width: auto;
-  height: auto;
-  object-fit: contain;
-  border-radius: 12px;
-  box-shadow: 0 0px 0px rgba(0, 0, 0, 0.1);
-}
-    img {
-      max-width: 100%;
-      height: 500px;
-      border-radius: 12px;
-      box-shadow: 0 0px 4px rgba(0,0,0,0.1);
+
+    .screen {
+      min-height: 350px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto;
+      background-color: rgba(255, 255, 255, 0.80);
+      padding: 20px;
+      border-radius: 16px;
+      box-sizing: border-box;
+      max-width: 800px;
+      width: 100%;
     }
+
+    /* Стили только для изображений внутри экранов */
+    .screen img {
+      max-width: 100%;
+      max-height: 65%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    /* Глобальный img больше НЕ применяется — чтобы не сломать персонажа */
+    /* Удалён: img { ... } */
+
     button {
       margin: 20px 0;
       padding: 12px 24px;
@@ -65,10 +68,12 @@
     button:hover {
       background: #D988BC;
     }
+
     h1, h2 {
       margin-top: 20px;
       color: #333;
     }
+
     p {
       line-height: 1.6;
       font-size: 18px;
@@ -76,6 +81,7 @@
       max-width: 600px;
       margin: 15px auto;
     }
+
     #artifactLink {
       display: block;
       margin-top: 15px;
@@ -86,129 +92,149 @@
     #artifactLink:hover {
       text-decoration: underline;
     }
-#character {
-  position: fixed;
-  right: 20px;
-  bottom: 20px;
-  max-width: 180px;
-  height: auto;
-  z-index: 100;
-  /* Никаких теней, рамок, скруглений */
-  box-shadow: none;
-  border-radius: 0;
-  border: none;
-}
+
+    /* Персонаж — кликабельный, с hover-эффектом */
+    #character-link {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      width: 180px;
+      height: 250px; /* подстройте под вашу картинку */
+      z-index: 100;
+      cursor: pointer;
+      background-image: url('character.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    #character-link:hover {
+      background-image: url('character_hover.png');
+      animation: vibrate 0.3s infinite;
+    }
+
+    @keyframes vibrate {
+      0%, 100% { transform: translateX(0); }
+      25%  { transform: translateX(-2px); }
+      75%  { transform: translateX(2px); }
+    }
+
+    /* Адаптив: на мобильных персонажа можно скрыть */
+    @media (max-width: 600px) {
+      #character-link {
+        display: none;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <!-- Персонаж — поверх всего -->
-  <img id="character" src="character.png" alt="Персонаж">
-  
-<!-- Экран приветствия -->
-<div id="startScreen" class="screen" style="display: block;">
-  <h1>КИП-нутое гадание</h1>
-  <img id="start1" src="start1.png" alt="Иллюстрация начала">
-  <br />
-  <button onclick="showCardBack()">Карту мне!</button>
-</div>
+  <!-- Персонаж — кликабельный блок -->
+  <a id="character-link" href="https://rusautomation.ru/" target="_blank" title="Перейти на rusautomation.ru"></a>
 
-<!-- Экран с перевёрнутой картой -->
-<div id="cardBackScreen" class="screen">
-  <h2>Сосредоточьтесь… и жмите!</h2>
-  <img id="cardBack" src="cartback.png" alt="Рубашка карты" onclick="showResult()">
-</div>
+  <!-- Экран приветствия -->
+  <div id="startScreen" class="screen" style="display: block;">
+    <h1>КИП-нутое гадание</h1>
+    <img id="start1" src="start1.png" alt="Иллюстрация начала">
+    <br />
+    <button onclick="showCardBack()">Карту мне!</button>
+  </div>
 
-<!-- Экран результата -->
-<div id="resultScreen" class="screen">
-  <h2 id="cardName">Рыба</h2>
-  <img id="cardImg" src="" alt="Карта Таро">
-  <p id="prediction">Рыба</p>
-  <a id="artifactLink" href="#" target="_blank">Подробнее об артефакте ⟶</a>
-  <br />
-  <button onclick="restart()">Еще раз!</button>
-</div>
+  <!-- Экран с перевёрнутой картой -->
+  <div id="cardBackScreen" class="screen">
+    <h2>Сосредоточьтесь… и жмите!</h2>
+    <img id="cardBack" src="cartback.png" alt="Рубашка карты" onclick="showResult()">
+  </div>
 
-<script>
-  // Предсказания и названия карт
-  const cards = [
-    {
-      name: "Байпасник гармонии",
-      img: "cartimg1.png",
-      text: "Конфликт перенаправлен в обходной контур. Совет: не пытайтесь ремонтировать отношения под давлением. Дайте системе устояться — тишина — отличный перепускной клапан.",
-      link: "https://rusautomation.ru/" // ← сюда можно вставить реальный URL, например: "https://example.com/bypass-harmony"
-    },
-    {
-      name: "Сигнализатор мгновения",
-      img: "cartimg2.png",
-      text: "Импульс «сейчас» зафиксирован. Это не ошибка — это окно возможностей. Принимайте как есть или дождитесь тайм-аута, но помните: повторный сигнал может и вовсе не поступить.",
-      link: "https://rusautomation.ru/"
-    },
-    {
-      name: "Шкаф управления судьбой",
-      img: "cartimg3.png",
-      text: "Система перегружена выбором. Отключите ненужные процессы: «что Подумают?», «А вдруг не получится?». Запустите автономный режим «Просто начни!» — мощности хватит.",
-      link: "https://rusautomation.ru/"
-    },
-    {
-      name: "Частотный преобразователь восприятия",
-      img: "cartimg4.png",
-      text: "Ваша реальность работает не на той частоте. Переключитесь на режим «Принятие» — он стабильнее и потребляет меньше энергии. Не забудьте фильтровать помехи вроде «Надо было…» и «А если бы…».",
-      link: "https://rusautomation.ru/"
-    },
-    {
-      name: "Энкодер самооценки",
-      img: "cartimg5.png",
-      text: "Калибровка самооценки требуется. Поверните ручку в сторону «я справлюсь» — даже если пока верится слабо. Точность настройки повысится с каждым маленьким действием в нужном направлении.",
-      link: "https://rusautomation.ru/"
-    },
-    {
-      name: "Система диспетчеризации жизнью",
-      img: "cartimg6.png",
-      text: "Потоки распределены неравномерно: «работа» — 90%, «я» — 2%. Срочно выделите ресурсы на обслуживание оператора. Без профилактики — аварийная остановка неизбежна.",
-      link: "https://rusautomation.ru/"
-    },
-    {
-      name: "Ротационник мировоззрения",
-      img: "cartimg7.png",
-      text: "Угол обзора устарел. Поворот на 30° вправо откроет новые горизонты — например, понимание, что не всё зависит от вас. Рекомендуется регулярная ротация раз в лунный цикл (или после бессонницы).",
-      link: "https://rusautomation.ru/"
-    },
-    {
-      name: "Лотовый уровнемер погружения",
-      img: "cartimg8.png",
-      text: "Уровень вовлечённости критически низок. Возможно, вы давно в спящем режиме. Совет: проверьте подключение к тому, что вас по-настоящему волнует. Кабель энтузиазма может быть просто не до конца вставлен.",
-      link: "https://rusautomation.ru/"
-    },
-    {
-      name: "Пневмовибратор чувств",
-      img: "cartimg9.png",
-      text: "Давление в эмоциональной системе растёт. Не глушите клапан! Выпустите пар через творчество, прогулку или честный разговор. Без сброса — риск гидроудара по нервной системе.",
-      link: "https://rusautomation.ru/"
+  <!-- Экран результата -->
+  <div id="resultScreen" class="screen">
+    <h2 id="cardName">Рыба</h2>
+    <img id="cardImg" src="" alt="Карта Таро">
+    <p id="prediction">Рыба</p>
+    <a id="artifactLink" href="#" target="_blank">Подробнее об артефакте ⟶</a>
+    <br />
+    <button onclick="restart()">Еще раз!</button>
+  </div>
+
+  <script>
+    const cards = [
+      {
+        name: "Байпасник гармонии",
+        img: "cartimg1.png",
+        text: "Конфликт перенаправлен в обходной контур. Совет: не пытайтесь ремонтировать отношения под давлением. Дайте системе устояться — тишина — отличный перепускной клапан.",
+        link: "https://rusautomation.ru/"
+      },
+      {
+        name: "Сигнализатор мгновения",
+        img: "cartimg2.png",
+        text: "Импульс «сейчас» зафиксирован. Это не ошибка — это окно возможностей. Принимайте как есть или дождитесь тайм-аута, но помните: повторный сигнал может и вовсе не поступить.",
+        link: "https://rusautomation.ru/"
+      },
+      {
+        name: "Шкаф управления судьбой",
+        img: "cartimg3.png",
+        text: "Система перегружена выбором. Отключите ненужные процессы: «что Подумают?», «А вдруг не получится?». Запустите автономный режим «Просто начни!» — мощности хватит.",
+        link: "https://rusautomation.ru/"
+      },
+      {
+        name: "Частотный преобразователь восприятия",
+        img: "cartimg4.png",
+        text: "Ваша реальность работает не на той частоте. Переключитесь на режим «Принятие» — он стабильнее и потребляет меньше энергии. Не забудьте фильтровать помехи вроде «Надо было…» и «А если бы…».",
+        link: "https://rusautomation.ru/"
+      },
+      {
+        name: "Энкодер самооценки",
+        img: "cartimg5.png",
+        text: "Калибровка самооценки требуется. Поверните ручку в сторону «я справлюсь» — даже если пока верится слабо. Точность настройки повысится с каждым маленьким действием в нужном направлении.",
+        link: "https://rusautomation.ru/"
+      },
+      {
+        name: "Система диспетчеризации жизнью",
+        img: "cartimg6.png",
+        text: "Потоки распределены неравномерно: «работа» — 90%, «я» — 2%. Срочно выделите ресурсы на обслуживание оператора. Без профилактики — аварийная остановка неизбежна.",
+        link: "https://rusautomation.ru/"
+      },
+      {
+        name: "Ротационник мировоззрения",
+        img: "cartimg7.png",
+        text: "Угол обзора устарел. Поворот на 30° вправо откроет новые горизонты — например, понимание, что не всё зависит от вас. Рекомендуется регулярная ротация раз в лунный цикл (или после бессонницы).",
+        link: "https://rusautomation.ru/"
+      },
+      {
+        name: "Лотовый уровнемер погружения",
+        img: "cartimg8.png",
+        text: "Уровень вовлечённости критически низок. Возможно, вы давно в спящем режиме. Совет: проверьте подключение к тому, что вас по-настоящему волнует. Кабель энтузиазма может быть просто не до конца вставлен.",
+        link: "https://rusautomation.ru/"
+      },
+      {
+        name: "Пневмовибратор чувств",
+        img: "cartimg9.png",
+        text: "Давление в эмоциональной системе растёт. Не глушите клапан! Выпустите пар через творчество, прогулку или честный разговор. Без сброса — риск гидроудара по нервной системе.",
+        link: "https://rusautomation.ru/"
+      }
+    ];
+
+    function showCardBack() {
+      document.getElementById('startScreen').style.display = 'none';
+      document.getElementById('cardBackScreen').style.display = 'block';
     }
-  ];
 
-  function showCardBack() {
-    document.getElementById('startScreen').style.display = 'none';
-    document.getElementById('cardBackScreen').style.display = 'block';
-  }
+    function showResult() {
+      const randomCard = cards[Math.floor(Math.random() * cards.length)];
+      document.getElementById('cardName').textContent = randomCard.name;
+      document.getElementById('cardImg').src = randomCard.img;
+      document.getElementById('prediction').textContent = randomCard.text;
+      document.getElementById('artifactLink').href = randomCard.link;
 
-  function showResult() {
-    const randomCard = cards[Math.floor(Math.random() * cards.length)];
-    document.getElementById('cardName').textContent = randomCard.name;
-    document.getElementById('cardImg').src = randomCard.img;
-    document.getElementById('prediction').textContent = randomCard.text;
-    document.getElementById('artifactLink').href = randomCard.link;
+      document.getElementById('cardBackScreen').style.display = 'none';
+      document.getElementById('resultScreen').style.display = 'block';
+    }
 
-    document.getElementById('cardBackScreen').style.display = 'none';
-    document.getElementById('resultScreen').style.display = 'block';
-  }
-
-  function restart() {
-    document.getElementById('resultScreen').style.display = 'none';
-    document.getElementById('startScreen').style.display = 'block';
-  }
-</script>
+    function restart() {
+      document.getElementById('resultScreen').style.display = 'none';
+      document.getElementById('startScreen').style.display = 'block';
+    }
+  </script>
 
 </body>
 </html>
